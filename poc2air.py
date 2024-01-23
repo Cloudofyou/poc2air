@@ -1,4 +1,5 @@
 import sys
+import os
 
 def find_switch_ports(input_file, output_file):
     with open(input_file, 'r') as input_file:
@@ -38,14 +39,14 @@ def replace_switch_ports(input_file, orig_file, output_file):
             output_file.writelines(newline)
 
 def main():
-    if len(sys.argv) != 3:
-        print(f"Usage: poc2air <input_yaml> <output_yaml>")
+    if len(sys.argv) != 2:
+        print(f"Usage: poc2air <input_yaml>")
     else:
         inputfilename = sys.argv[1]
-        outputfilename = sys.argv[2]
-        find_switch_ports(inputfilename, inputfilename+'strip.yaml')
-        define_new_ports(inputfilename+'strip.yaml', inputfilename+'formatted.yaml')
-        replace_switch_ports(inputfilename+'formatted.yaml', inputfilename, outputfilename)
+        inputfilename_stripped, extension = os.path.splitext(inputfilename)
+        find_switch_ports(inputfilename, inputfilename_stripped+'-strip.yaml')
+        define_new_ports(inputfilename+'strip.yaml', inputfilename_stripped+'-formatted.yaml')
+        replace_switch_ports(inputfilename_stripped+'-formatted.yaml', inputfilename, outputfilename)
 
 if __name__ == "__main__":
     main()
