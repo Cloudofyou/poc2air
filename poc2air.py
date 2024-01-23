@@ -44,6 +44,7 @@ def main():
     else:
         inputfilename = sys.argv[1]
         inputfilename_stripped, extension = os.path.splitext(inputfilename)
+        outputfilename = inputfilename_stripped+'-output.yaml'
         find_switch_ports(inputfilename, inputfilename_stripped+'-strip.yaml')
         define_new_ports(inputfilename+'strip.yaml', inputfilename_stripped+'-formatted.yaml')
         replace_switch_ports(inputfilename_stripped+'-formatted.yaml', inputfilename, outputfilename)
