@@ -44,7 +44,7 @@ def main():
     else:
         inputfilename = sys.argv[1]
         inputfilename_stripped, extension = os.path.splitext(inputfilename)
-        outputfilename = inputfilename_stripped+'-output.yaml'
+        outputfilename = inputfilename_stripped+'-AIR.yaml'
         strippedfilename = inputfilename_stripped+'-strip.yaml'
         formattedfilename = inputfilename_stripped+'-formatted.yaml'
         print("inputfilename: ", inputfilename)
@@ -53,9 +53,9 @@ def main():
         print("outputfilename: ", outputfilename)
         print("strippedfilename: ", strippedfilename)
         print("formattedfilename: ", formattedfilename)
-        ## find_switch_ports(inputfilename, strippedfilename)
-        ## define_new_ports(strippedfilename, formattedfilename)
-        ## replace_switch_ports(formattedfilename, inputfilename, outputfilename)
+        find_switch_ports(inputfilename, strippedfilename)
+        define_new_ports(strippedfilename, formattedfilename)
+        replace_switch_ports(formattedfilename, inputfilename, outputfilename)
 
 if __name__ == "__main__":
     main()
