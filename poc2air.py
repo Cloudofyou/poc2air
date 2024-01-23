@@ -43,9 +43,9 @@ def main():
     else:
         inputfilename = sys.argv[1]
         outputfilename = sys.argv[2]
-        find_switch_ports(inputfilename, 'output.txt')
-        define_new_ports('output.txt', 'formatted.txt')
-        replace_switch_ports('formatted.txt', inputfilename, outputfilename)
+        find_switch_ports(inputfilename, inputfilename+'strip.yaml')
+        define_new_ports(inputfilename+'strip.yaml', inputfilename+'formatted.yaml')
+        replace_switch_ports(inputfilename+'formatted.yaml', inputfilename, outputfilename)
 
 if __name__ == "__main__":
     main()
