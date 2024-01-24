@@ -32,10 +32,11 @@ def replace_switch_ports(input_file, orig_file, output_file):
     with open(output_file, 'w') as output_file:
         for line in origlines:
             if "swp" in line and ":" in line and "type: swp" not in line:
-               newline = "    " + lines[counter]
-               counter += 1
+                newline = "# " + line + "    " + lines[counter]
+#               newline = "    " + lines[counter]
+                counter += 1
             else:
-               newline = line
+                newline = line
             output_file.writelines(newline)
 
 def main():
