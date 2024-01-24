@@ -13,8 +13,13 @@ If you use the additional script: python3 mergeportlayout.py <input_yaml_file>, 
 IFN-merge.yaml        :  List of original yaml interfaces and what they are mapped to in the final AIR yaml file
 
 To test:
+
 git clone https://github.com/Cloudofyou/poc2air.git
+
 cd poc2air
+
 python3 poc2air.py sample-leaf.yaml
+
 python3 mergeportlayout.py sample-leaf.yaml
+
 
