@@ -10,7 +10,9 @@ def merge_ports(infile1, infile2, outfile):
         counter = 0
         for line in file1lines:
             templine = line.strip()
-            outline = templine+"  --->  "+file2lines[counter]
+            if len(templine) < 8:
+                templine += "\t"
+            outline = templine+"\t--->\t\t"+file2lines[counter]
             counter += 1
             outputfile.writelines(outline)
 
