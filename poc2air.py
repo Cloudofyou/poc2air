@@ -60,7 +60,7 @@ def replace_switch_ports(input_file, orig_file, output_file):
                 newline = line
             output_file.writelines(newline)
 
-def merge_ports(infile1, infile2, outfile):
+def map_ports(infile1, infile2, outfile):
     with open(infile1, 'r') as inputfile1:
         file1lines = inputfile1.readlines()
     with open(infile2, 'r') as inputfile2:
@@ -82,6 +82,11 @@ def main():
     mappedfilename = inputfilename_stripped+'_mapped.yaml'
     strippedfilename = inputfilename_stripped+'_strip.yaml'
     formattedfilename = inputfilename_stripped+'_formatted.yaml'
+
+    if not os.path.isfile(inputfilename):
+        print(f"Error opening input file: {inputfilename})
+        exit(1)
+    
     
     print("poc2air.")
     print(f"input file:   {inputfilename}")
@@ -93,7 +98,8 @@ def main():
     find_switch_ports(inputfilename, strippedfilename)
     define_new_ports(strippedfilename, formattedfilename)
     replace_switch_ports(formattedfilename, inputfilename, outputfilename)
-    merge_ports(strippedfilename, formattedfilename, mappedfilename)
+    if is_mapped:
+        map_ports(strippedfilename, formattedfilename, mappedfilename)
     os.remove(formattedfilename)
     os.remove(strippedfilename)
     
