@@ -94,6 +94,9 @@ def main():
     define_new_ports(strippedfilename, formattedfilename)
     replace_switch_ports(formattedfilename, inputfilename, outputfilename)
     merge_ports(strippedfilename, formattedfilename, mappedfilename)
+    os.remove(formattedfilename)
+    os.remove(strippedfilename)
+    
     print("done.\n")
 
 if __name__ == "__main__":
