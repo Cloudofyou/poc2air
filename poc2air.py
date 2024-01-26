@@ -56,8 +56,8 @@ def replace_switch_ports(input_file, orig_file, output_file):
                 else:
                     newline = "\n    " + lines[counter]
                 counter += 1
-                else:
-                    newline = line
+            else:
+                newline = line
             output_file.writelines(newline)
 
 def merge_ports(infile1, infile2, outfile):
