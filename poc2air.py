@@ -86,7 +86,7 @@ def main():
     formattedfilename = inputfilename_stripped+'_formatted.yaml'
 
     if not os.path.isfile(inputfilename):
-        print(f"Error opening input file: {inputfilename})
+        print(f"Error opening input file: {inputfilename}")
         exit(1)
     
     
