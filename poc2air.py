@@ -8,7 +8,7 @@ is_embedded = False
 parser = argparse.ArgumentParser(description='Convert physical (POC) to virtual (AIR) Cumulus YAML configuration file')
 parser.add_argument('poc_file', help='provide the saved YAML configuration file from the physical switch')
 parser.add_argument('-m', '--mapped', action='store_true', help='displays mapped interfaces from POC to AIR')
-parser.add_argument('-e', '--embed-comments', action='store_true', help='will embed # comments in AIR file with source interface')
+parser.add_argument('-e', '--embed', action='store_true', help='will embed # comments in AIR file with source interface')
 args = parser.parse_args()
 
 if args.poc_file:
@@ -17,8 +17,8 @@ if args.poc_file:
 if args.mapped:
     is_mapped = args.mapped
     
-if args.embed-comments:
-    is_embedded = args.embed-comments
+if args.embed:
+    is_embedded = args.embed
 
 def find_switch_ports(input_file, output_file):
     with open(input_file, 'r') as input_file:
