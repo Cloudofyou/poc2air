@@ -1,5 +1,24 @@
 import sys
 import os
+import argparse
+
+is_mapped = False
+is_embedded = False
+
+parser = argparse.ArgumentParser(description='Convert physical (POC) to virtual (AIR) Cumulus YAML configuration file')
+parser.add_argument('poc_file', help='provide the saved YAML configuration file from the physical switch')
+parser.add_argument('-m', '--mapped', action='store_true', help='displays mapped interfaces from POC to AIR')
+parser.add_argument('-e', '--embed-comments', action='store_true', help='will embed # comments in AIR file with source interface')
+args = parser.parse_args()
+
+if args.poc_file:
+    poc_file = args.poc_file
+    
+if args.mapped:
+    is_mapped = args.mapped
+    
+if args.embed-comments:
+    is_embedded = args.embed-comments
 
 def find_switch_ports(input_file, output_file):
     with open(input_file, 'r') as input_file:
@@ -32,10 +51,13 @@ def replace_switch_ports(input_file, orig_file, output_file):
     with open(output_file, 'w') as output_file:
         for line in origlines:
             if "swp" in line and ":" in line and "type: swp" not in line:
-                newline = "\n# " + line.strip() + "\n    " + lines[counter]
+                if is_embedded:
+                    newline = "\n# " + line.strip() + "\n    " + lines[counter]
+                else:
+                    newline = "\n    " + lines[counter]
                 counter += 1
-            else:
-                newline = line
+                else:
+                    newline = line
             output_file.writelines(newline)
 
 def merge_ports(infile1, infile2, outfile):
@@ -54,27 +76,26 @@ def merge_ports(infile1, infile2, outfile):
             outputfile.writelines(outline)
 
 def main():
-    if len(sys.argv) != 2:
-        print(f"Usage: poc2air <input_yaml>")
-    else:
-        inputfilename = sys.argv[1]
-        inputfilename_stripped, extension = os.path.splitext(inputfilename)
-        outputfilename = inputfilename_stripped+'-AIR.yaml'
-        mergedfilename = inputfilename_stripped+'-merge.yaml'
-        strippedfilename = inputfilename_stripped+'-strip.yaml'
-        formattedfilename = inputfilename_stripped+'-formatted.yaml'
-        print("inputfilename: ", inputfilename)
-        print("inputfilename_stripped: ", inputfilename_stripped)
-        print("extension: ", extension)
-        print("outputfilename: ", outputfilename)
-        print("mergedfilename: ", mergedfilename)
-        print("strippedfilename: ", strippedfilename)
-        print("formattedfilename: ", formattedfilename)
-        find_switch_ports(inputfilename, strippedfilename)
-        define_new_ports(strippedfilename, formattedfilename)
-        replace_switch_ports(formattedfilename, inputfilename, outputfilename)
-        merge_ports(strippedfilename, formattedfilename, mergedfilename)
-        print("done.\n")
+    inputfilename = poc_file
+    inputfilename_stripped, extension = os.path.splitext(inputfilename)
+    outputfilename = inputfilename_stripped+'_air.yaml'
+    mappedfilename = inputfilename_stripped+'_mapped.yaml'
+    strippedfilename = inputfilename_stripped+'_strip.yaml'
+    formattedfilename = inputfilename_stripped+'_formatted.yaml'
+    
+    print("poc2air.")
+    print(f"input file:   {inputfilename}")
+    print(f"stripped:     {inputfilename_stripped}")
+    if is_mapped:
+        print(f"mapped:       {mappedfilename}")
+    print(f"output file:  {outputfilename}")
+
+    find_switch_ports(inputfilename, strippedfilename)
+    define_new_ports(strippedfilename, formattedfilename)
+    replace_switch_ports(formattedfilename, inputfilename, outputfilename)
+    merge_ports(strippedfilename, formattedfilename, mappedfilename)
+    print("done.\n")
 
 if __name__ == "__main__":
     main()
+
