@@ -38,6 +38,21 @@ def replace_switch_ports(input_file, orig_file, output_file):
                 newline = line
             output_file.writelines(newline)
 
+def merge_ports(infile1, infile2, outfile):
+    with open(infile1, 'r') as inputfile1:
+        file1lines = inputfile1.readlines()
+    with open(infile2, 'r') as inputfile2:
+        file2lines = inputfile2.readlines()
+    with open(outfile, 'w') as outputfile:
+        counter = 0
+        for line in file1lines:
+            templine = line.strip()
+            if len(templine) < 8:
+                templine += "\t"
+            outline = templine+"\t--->\t\t"+file2lines[counter]
+            counter += 1
+            outputfile.writelines(outline)
+
 def main():
     if len(sys.argv) != 2:
         print(f"Usage: poc2air <input_yaml>")
@@ -45,17 +60,21 @@ def main():
         inputfilename = sys.argv[1]
         inputfilename_stripped, extension = os.path.splitext(inputfilename)
         outputfilename = inputfilename_stripped+'-AIR.yaml'
+        mergedfilename = inputfilename_stripped+'-merge.yaml'
         strippedfilename = inputfilename_stripped+'-strip.yaml'
         formattedfilename = inputfilename_stripped+'-formatted.yaml'
         print("inputfilename: ", inputfilename)
         print("inputfilename_stripped: ", inputfilename_stripped)
         print("extension: ", extension)
         print("outputfilename: ", outputfilename)
+        print("mergedfilename: ", mergedfilename)
         print("strippedfilename: ", strippedfilename)
         print("formattedfilename: ", formattedfilename)
         find_switch_ports(inputfilename, strippedfilename)
         define_new_ports(strippedfilename, formattedfilename)
         replace_switch_ports(formattedfilename, inputfilename, outputfilename)
+        merge_ports(strippedfilename, formattedfilename, mergedfilename)
+        print("done.\n")
 
 if __name__ == "__main__":
     main()
