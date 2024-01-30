@@ -1,0 +1,291 @@
+- header:
+    model: VX
+    nvue-api-version: nvue_v1
+    rev-id: 1.0
+    version: Cumulus Linux 5.7.0
+- set:
+    evpn:
+      enable: on
+    interface:
+      eth0:
+        type: eth
+      lo:
+        ip:
+          address:
+            10.0.2.2/32: {}
+            11.0.0.1/32: {}
+        type: loopback
+      swp35:
+        link:
+          breakout:
+            2x: {}
+        type: swp
+      swp35s0:
+        link:
+          speed: 400G
+          state:
+            up: {}
+        type: swp
+      swp35s1:
+        link:
+          speed: 400G
+          state:
+            up: {}
+        type: swp
+      swp58:
+        link:
+          breakout:
+            2x: {}
+        type: swp
+      swp58s0:
+        ip:
+          address:
+            10.200.22.0/31: {}
+        link:
+          state:
+            up: {}
+        type: swp
+      swp58s1:
+        ip:
+          address:
+            10.200.22.2/31: {}
+        link:
+          state:
+            up: {}
+        type: swp
+    nve:
+      vxlan:
+        enable: on
+    router:
+      bgp:
+        autonomous-system: 64602
+        enable: on
+        graceful-restart:
+          mode: full
+          restart-time: 300
+        router-id: 10.0.2.2
+      policy:
+        community-list:
+          MATCH_POLICY_ATTRIBUTE_LOCALPREF_0:
+            rule:
+              '10':
+                action: permit
+                community:
+                  3:1200: {}
+          MATCH_POLICY_ATTRIBUTE_LOCALPREF_200:
+            rule:
+              '20':
+                action: permit
+                community:
+                  3:1202: {}
+          MATCH_POLICY_ATTRIBUTE_LOCALPREF_300:
+            rule:
+              '30':
+                action: permit
+                community:
+                  3:1203: {}
+          MATCH_POLICY_ATTRIBUTE_LOCALPREF_1000:
+            rule:
+              '40':
+                action: permit
+                community:
+                  3:1210: {}
+          SET_POLICY_ATTRIBUTE_LOCALPREF_0:
+            rule:
+              '10':
+                action: permit
+                community:
+                  3:1200: {}
+        route-map:
+          QFABT2_FROM_QFABT0:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_0
+                set:
+                  local-preference: 0
+              '20':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_200
+                set:
+                  local-preference: 200
+              '30':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_300
+                set:
+                  local-preference: 300
+              '40':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_1000
+                set:
+                  local-preference: 1000
+              '50':
+                action:
+                  permit: {}
+                set:
+                  local-preference: 100
+          QFABT2_FROM_QFABT1:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_0
+                set:
+                  local-preference: 0
+              '20':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_200
+                set:
+                  local-preference: 200
+              '30':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_300
+                set:
+                  local-preference: 300
+              '40':
+                action:
+                  permit: {}
+                match:
+                  community-list: MATCH_POLICY_ATTRIBUTE_LOCALPREF_1000
+                set:
+                  local-preference: 1000
+              '50':
+                action:
+                  permit: {}
+                set:
+                  local-preference: 100
+          QFABT2_TO_QFABT0:
+            rule:
+              '20':
+                action:
+                  permit: {}
+          QFABT2_TO_QFABT1:
+            rule:
+              '20':
+                action:
+                  permit: {}
+          bgp-prefix-export:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                match:
+                  ip-prefix-list: bgp-prefix-export
+                  type: ipv4
+          bgp-prefix-import:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                match:
+                  ip-prefix-list: bgp-prefix-import
+                  type: ipv4
+          loopback:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                match:
+                  interface: lo
+              '20':
+                action:
+                  deny: {}
+    service:
+      syslog:
+        mgmt:
+          server:
+            10.2.19.5:
+              port: 514
+              protocol: udp
+    system:
+      config:
+        auto-save:
+          enable: on
+      hostname: nqa3-SN5600-6-E8-16
+      ssh-server:
+        login-timeout: 60
+        vrf:
+          mgmt: {}
+      timezone: US/Pacific
+    vrf:
+      default:
+        router:
+          bgp:
+            address-family:
+              ipv4-unicast:
+                enable: on
+                multipaths:
+                  ebgp: 128
+                redistribute:
+                  connected:
+                    enable: on
+                    route-map: loopback
+              l2vpn-evpn:
+                enable: on
+            enable: on
+            neighbor:
+              10.0.0.1:
+                peer-group: QFABT0
+                type: numbered
+              10.0.0.2:
+                peer-group: QFABT0
+                type: numbered
+              10.200.22.1:
+                peer-group: QFABT1
+                type: numbered
+              10.200.22.3:
+                peer-group: QFABT1
+                type: numbered
+            path-selection:
+              multipath:
+                aspath-ignore: on
+              routerid-compare: on
+            peer-group:
+              QFABT0:
+                address-family:
+                  ipv4-unicast:
+                    enable: off
+                  l2vpn-evpn:
+                    enable: on
+                    policy:
+                      inbound:
+                        route-map: QFABT2_FROM_QFABT0
+                      outbound:
+                        route-map: QFABT2_TO_QFABT0
+                    soft-reconfiguration: on
+                multihop-ttl: 6
+                remote-as: external
+                timers:
+                  hold: 18
+                  keepalive: 6
+                update-source: lo
+              QFABT1:
+                address-family:
+                  ipv4-unicast:
+                    policy:
+                      inbound:
+                        route-map: QFABT2_FROM_QFABT1
+                      outbound:
+                        route-map: QFABT2_TO_QFABT1
+                    prefix-limits:
+                      inbound:
+                        maximum: 128000
+                        warning-threshold: 80
+                    soft-reconfiguration: on
+                remote-as: external
+                timers:
+                  hold: 9
+                  keepalive: 3
