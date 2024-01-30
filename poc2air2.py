@@ -14,11 +14,8 @@ args = parser.parse_args()
 if args.poc_file:
     poc_file = args.poc_file
 
-if args.mapped:
-    is_mapped = args.mapped
-
-if args.embed:
-    is_embedded = args.embed
+if args.map_file:
+    map_file = args.map_file
 
 def remap_switch_ports_to_air_ports(map_file, input_file, output_file):
     pairs_list = []
@@ -29,16 +26,30 @@ def remap_switch_ports_to_air_ports(map_file, input_file, output_file):
                 pairs_list.append((parts[0],parts[1]))
 
     with open(input_file, 'r') as inputfile:
-        filelines = inputfilie.readlines()
+        filelines = inputfile.readlines()
 
     with open(output_file, 'w') as outputfile:
+        portflagged = False
+        counter = 0
         for line in filelines:
             newline = line
-            for loop in len(pairs_list):
+            isfound = False
+            for loop in range(len(pairs_list)):
                 pair = pairs_list[loop]
                 if pair[0] in line:
                     newline = line.replace(pair[0],pair[1])
-            output_file.writelines(newline)
+                    isfound = True
+            if isfound:
+                outputfile.writelines(newline)
+            else:
+                if portflagged:
+                    if "type: swp" in line:
+                        portflagged = False
+                else:
+                    if ("swp" in line and ":" in line and not "type:" in line):
+                        portflagged = True
+                    else:
+                        outputfile.writelines(newline)
 
 def main():
     inputfilename = poc_file
