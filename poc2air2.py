@@ -3,7 +3,6 @@
 import sys
 import os
 import argparse
-import yaml
 
 parser = argparse.ArgumentParser(description='Convert physical (POC) to virtual (AIR) Cumulus YAML configuration file')
 parser.add_argument('poc_file', help='provide the saved YAML configuration file from the physical switch')
@@ -43,12 +42,14 @@ def remap_switch_ports_to_air_ports(map_file, input_file, output_file):
                 outputfile.writelines(newline)
             else:
                 if portflagged:
-                    if "type: swp" in line:
+                    if "type: swp" in line or "type: eth" in line:
                         portflagged = False
                 else:
-                    if ("swp" in line and ":" in line and not "type:" in line):
+                    if ("swp" in line and ":" in line and not "type:" in line) or "eth0:" in line:
                         portflagged = True
                     else:
+                        if "model: " in newline:
+                            newline = "    model: VX"
                         outputfile.writelines(newline)
 
 def main():
