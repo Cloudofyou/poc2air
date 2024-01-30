@@ -42,14 +42,14 @@ def remap_switch_ports_to_air_ports(map_file, input_file, output_file):
                 outputfile.writelines(newline)
             else:
                 if portflagged:
-                    if "type: swp" in line or "type: eth" in line:
+                    if "type: swp" in line:
                         portflagged = False
                 else:
-                    if ("swp" in line and ":" in line and not "type:" in line) or "eth0:" in line:
+                    if "swp" in line and ":" in line and not "type:" in line:
                         portflagged = True
                     else:
                         if "model: " in newline:
-                            newline = "    model: VX"
+                            newline = "    model: VX\n"
                         outputfile.writelines(newline)
 
 def main():
