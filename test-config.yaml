@@ -1,5 +1,5 @@
 - header:
-    model: VX
+    model: SN5400
     nvue-api-version: nvue_v1
     rev-id: 1.0
     version: Cumulus Linux 5.7.0
@@ -12,8 +12,8 @@
       lo:
         ip:
           address:
-            10.0.2.2/32: {}
-            11.0.0.1/32: {}
+            10.100.0.1/32: {}
+            10.110.0.1/32: {}
         type: loopback
       swp35:
         link:
@@ -40,7 +40,7 @@
       swp58s0:
         ip:
           address:
-            10.200.22.0/31: {}
+            172.16.54.0/31: {}
         link:
           state:
             up: {}
@@ -48,7 +48,7 @@
       swp58s1:
         ip:
           address:
-            10.200.22.2/31: {}
+            172.16.54.2/31: {}
         link:
           state:
             up: {}
@@ -58,12 +58,12 @@
         enable: on
     router:
       bgp:
-        autonomous-system: 64602
+        autonomous-system: 65300
         enable: on
         graceful-restart:
           mode: full
           restart-time: 300
-        router-id: 10.0.2.2
+        router-id: 10.100.0.1
       policy:
         community-list:
           MATCH_POLICY_ATTRIBUTE_LOCALPREF_0:
@@ -97,7 +97,7 @@
                 community:
                   3:1200: {}
         route-map:
-          QFABT2_FROM_QFABT0:
+          NET_FAB2_FROM_NET_FAB0:
             rule:
               '10':
                 action:
@@ -132,7 +132,7 @@
                   permit: {}
                 set:
                   local-preference: 100
-          QFABT2_FROM_QFABT1:
+          NET_FAB2_FROM_NET_FAB1:
             rule:
               '10':
                 action:
@@ -167,12 +167,12 @@
                   permit: {}
                 set:
                   local-preference: 100
-          QFABT2_TO_QFABT0:
+          NET_FAB2_TO_NET_FAB0:
             rule:
               '20':
                 action:
                   permit: {}
-          QFABT2_TO_QFABT1:
+          NET_FAB2_TO_NET_FAB1:
             rule:
               '20':
                 action:
@@ -207,19 +207,19 @@
       syslog:
         mgmt:
           server:
-            10.2.19.5:
+            10.200.200.250:
               port: 514
               protocol: udp
     system:
       config:
         auto-save:
           enable: on
-      hostname: nqa3-SN5600-6-E8-16
+      hostname: sample-host
       ssh-server:
         login-timeout: 60
         vrf:
           mgmt: {}
-      timezone: US/Pacific
+      timezone: US/Central
     vrf:
       default:
         router:
@@ -237,24 +237,24 @@
                 enable: on
             enable: on
             neighbor:
-              10.0.0.1:
-                peer-group: QFABT0
+              10.100.0.2:
+                peer-group: NET_FAB0
                 type: numbered
-              10.0.0.2:
-                peer-group: QFABT0
+              10.110.0.2:
+                peer-group: NET_FAB0
                 type: numbered
-              10.200.22.1:
-                peer-group: QFABT1
+              172.16.54.1:
+                peer-group: NET_FAB1
                 type: numbered
-              10.200.22.3:
-                peer-group: QFABT1
+              172.16.54.3:
+                peer-group: NET_FAB1
                 type: numbered
             path-selection:
               multipath:
                 aspath-ignore: on
               routerid-compare: on
             peer-group:
-              QFABT0:
+              NET_FAB0:
                 address-family:
                   ipv4-unicast:
                     enable: off
@@ -262,9 +262,9 @@
                     enable: on
                     policy:
                       inbound:
-                        route-map: QFABT2_FROM_QFABT0
+                        route-map: NET_FAB2_FROM_NET_FAB0
                       outbound:
-                        route-map: QFABT2_TO_QFABT0
+                        route-map: NET_FAB2_TO_NET_FAB0
                     soft-reconfiguration: on
                 multihop-ttl: 6
                 remote-as: external
@@ -272,14 +272,14 @@
                   hold: 18
                   keepalive: 6
                 update-source: lo
-              QFABT1:
+              NET_FAB1:
                 address-family:
                   ipv4-unicast:
                     policy:
                       inbound:
-                        route-map: QFABT2_FROM_QFABT1
+                        route-map: NET_FAB2_FROM_NET_FAB1
                       outbound:
-                        route-map: QFABT2_TO_QFABT1
+                        route-map: NET_FAB2_TO_NET_FAB1
                     prefix-limits:
                       inbound:
                         maximum: 128000
